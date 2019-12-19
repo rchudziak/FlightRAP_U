@@ -1,0 +1,84 @@
+implementation unmanaged;
+
+// behavior defintion for the TRAVEL root entity
+define behavior for ZI_Travel_U alias travel
+implementation in class zbp_travel_u unique
+etag LastChangedAt
+{
+  field ( read only ) TravelID;
+  field ( mandatory ) AgencyID, CustomerID, BeginDate, EndDate;
+
+  create;
+  update;
+  delete;
+
+  action set_status_booked result [1] $self;
+
+  association _Booking { create; }
+
+
+  mapping for /dmo/travel
+  {
+    AgencyID = agency_id;
+    BeginDate = begin_date;
+    BookingFee = booking_fee;
+    CurrencyCode = currency_code;
+    CustomerID = customer_id;
+    EndDate = end_date;
+    LastChangedAt = lastchangedat;
+    Memo = description;
+    Status = status;
+    TotalPrice = total_price;
+    TravelID = travel_id;
+  }
+
+}
+
+// behavior defintion for the BOOKING child entity
+define behavior for ZI_Booking_U alias booking
+implementation in class ZBP_BOOKING_U unique
+{
+  field ( read only ) TravelID, BookingID;
+  field ( mandatory ) BookingDate, CustomerID, AirlineID, ConnectionID, FlightDate;
+
+  update;
+  delete;
+
+  association _BookSupplement { create; }
+  //association _BookSupplement abbreviation _Supplement { create; }
+
+  mapping for /dmo/booking
+  {
+    AirlineID = carrier_id;
+    BookingDate = booking_date;
+    BookingID = booking_id;
+    ConnectionID = connection_id;
+    CurrencyCode = currency_code;
+    CustomerID = customer_id;
+    FlightDate = flight_date;
+    FlightPrice = flight_price;
+    TravelID = travel_id;
+  }
+}
+
+define behavior for ZI_BookingSupplement_U alias bookingsupplement
+implementation in class ZBP_BOOKINGSUPPLEMENT_U unique
+{
+
+  field ( read only ) TravelID, BookingID, BookingSupplementID;
+  field ( mandatory ) SupplementID, Price;
+
+  update;
+  delete;
+
+  mapping for /dmo/book_suppl
+  {
+    BookingID = booking_id;
+    BookingSupplementID = booking_supplement_id;
+    CurrencyCode = currency_code;
+    Price = price;
+    SupplementID = supplement_id;
+    TravelID = travel_id;
+  }
+
+}
